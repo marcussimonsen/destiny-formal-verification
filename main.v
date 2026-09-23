@@ -69,32 +69,34 @@ Inductive MultiStepRewrite : list Judgment -> list Judgment -> Prop :=
       MultiStepRewrite (j1 :: js) (j1' :: js)
 .
 
-Example n : nat := 3.
+Example three : nat := 3.
+Example four : nat := 4.
 
-Example e : Expression := Nat n.
+Example e1 : Expression := Nat three.
+Example e2 : Expression := Nat four.
 
 Example d : Destination := 0.
 Example d1 : Destination := 1.
 Example d2 : Destination := 2.
 
-Example ex1 : Judgment := ev e d.
+Example ex1 : Judgment := ev e1 d.
 
-Example ret1 : Judgment := ret n d.
+Example ret1 : Judgment := ret three d.
 
 Example rewrite1 : Rewrite [ex1] [ret1].
 Proof.
   apply evnat.
 Qed.
 
-Example rewrite2 : MultiStepRewrite [ev (Plus (Nat 3) (Nat 4)) d] [ret 7 d].
+Example rewrite2 : MultiStepRewrite [ev (Plus e1 e2) d] [ret 7 d].
 Proof.
-  apply MSTrans with (j2 := ev (Nat 3) d1 :: frame (Fe d1 (Nat 4)) d :: nil).
+  apply MSTrans with (j2 := ev (Nat three) d1 :: frame (Fe d1 e2) d :: nil).
   - apply MSStep. apply evadd1.
-  - apply MSTrans with (j2 := ret n d1 :: frame (Fe d1 (Nat 4)) d :: nil).
+  - apply MSTrans with (j2 := ret three d1 :: frame (Fe d1 e2) d :: nil).
     + apply MSHead. apply MSStep. apply evnat.
-    + apply MSTrans with (j2 := ev (Nat 4) d2 :: [frame (Fv 3 d2) d]).
+    + apply MSTrans with (j2 := ev e2 d2 :: [frame (Fv three d2) d]).
       * apply MSStep. apply evadd2.
-      * apply MSTrans with (j2 := ret 4 d2 :: [frame (Fv 3 d2) d]).
+      * apply MSTrans with (j2 := ret four d2 :: [frame (Fv three d2) d]).
         -- apply MSHead. apply MSStep. apply evnat.
         -- apply MSStep. apply evadd3.
 Qed.
